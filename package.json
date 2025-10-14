@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@adonisjs/lucid": "^21.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.0"
+  }
+}
