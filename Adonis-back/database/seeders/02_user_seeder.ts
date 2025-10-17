@@ -1,5 +1,6 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import User from '#models/user'
+import Hash from '@adonisjs/core/services/hash'
 
 export default class UsersSeeder extends BaseSeeder {
   public async run () {
@@ -7,7 +8,7 @@ export default class UsersSeeder extends BaseSeeder {
       {
         fullName: 'Mateus Munhoz',
         email: 'mateus@gmail.com',
-        password: '123456',
+        password: await Hash.make('123456'),
         cpf: '12345678901',
         cidade: 'Pontal do Paraná',
         estado: 'PR',
@@ -18,7 +19,7 @@ export default class UsersSeeder extends BaseSeeder {
       {
         fullName: 'Leonardo Henz',
         email: 'leonardo@gmail.com',
-        password: '123456',
+        password: await Hash.make('123456'),
         cpf: '98765432100',
         cidade: 'Matinhos',
         estado: 'PR',

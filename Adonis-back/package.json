@@ -58,9 +58,13 @@
     "@adonisjs/lucid": "^21.6.1",
     "@vinejs/vine": "^3.0.1",
     "bounce": "^1.2.3",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
     "luxon": "^3.7.2",
-    "mysql2": "^3.14.4",
-    "reflect-metadata": "^0.2.2"
+    "mysql": "^2.18.1",
+    "mysql2": "^3.15.2",
+    "reflect-metadata": "^0.2.2",
+    "sequelize": "^6.37.7"
   },
   "hotHook": {
     "boundaries": [
