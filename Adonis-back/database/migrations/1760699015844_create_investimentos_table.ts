@@ -8,10 +8,8 @@ export default class Investimentos extends BaseSchema {
       table.increments('id')
       table.string('tipo')
       table.decimal('valor', 12, 2)
-      table.integer('conta_id').unsigned().references('id').inTable('contas').onDelete('CASCADE')
-
-      table.timestamp('created_at')
-      table.timestamp('updated_at')
+      table.integer('conta_id').unsigned() 
+      table.timestamps(true)
     })
   }
 

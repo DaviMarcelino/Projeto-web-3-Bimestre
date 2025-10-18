@@ -6,13 +6,11 @@ export default class Transacoes extends BaseSchema {
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.string('tipo')
-      table.decimal('valor', 12, 2)
-      table.string('descricao')
-      table.integer('conta_id').unsigned().references('id').inTable('contas').onDelete('CASCADE')
-
-      table.timestamp('created_at')
-      table.timestamp('updated_at')
+      table.string('tipo').notNullable()
+      table.decimal('valor', 12, 2).notNullable()
+      table.string('descricao').notNullable()
+      table.integer('conta_id').unsigned().notNullable() // APENAS a coluna, SEM foreign key
+      table.timestamps(true)
     })
   }
 

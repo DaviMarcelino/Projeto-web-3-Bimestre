@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom'; // Corrigido import
 import { OrbitProgress } from 'react-loading-indicators';
 import UserContext from '../../contexts/UserContext';
 import { Client, setToken, testConnection } from '../../api/client';
@@ -15,15 +15,16 @@ import {
   SendBox,
   Submit,
   LinkForgot,
-  CreateButton,
   Orbit,
-} from './style';
+} from './style'; // Removido CreateButton não utilizado
 
 export default function FormLogin() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
   const [load, setLoad] = useState(false);
-  const [view, setView] = useState(false);
+  const [error, setError] = useState(''); // Substitui 'view' por 'error'
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
 
@@ -31,37 +32,51 @@ export default function FormLogin() {
     testConnection();
   }, []);
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    if (error) setError('');
+  };
 
-  // TESTE
-  function Authenticate() {
+  const handleSubmit = async (e) => {
+    e?.preventDefault(); // Previne default se for evento
+    
+    // Validação básica
+    if (!formData.email || !formData.password) {
+      setError('Por favor, preencha todos os campos');
+      return;
+    }
 
-    const user = { email: email, password: password }
+    setError('');
+    setLoad(true);
 
-    setView(false)
-    setLoad(true)
-    setTimeout(() => {
-      Client.post('/auth/login', user).then(res => {
-        const load = res.data
-        console.log(load)
-        // Context
-        setUser(load.user)
-        // Local Storage
-        setDataUser(load.user)
-        setToken(load.token.value)
-        setPermissions(load.permissions)
-        navigate('/home')
-      })
-        .catch(function (error) {
-          setView(true)
-          console.log(error)
-        })
-        .finally(() => {
-          setLoad(false)
-        })
+    try {
+      const response = await Client.post('/auth/login', formData);
+      const data = response.data;
+      
+      // Context
+      setUser(data.user);
+      // Local Storage
+      setDataUser(data.user);
+      setToken(data.token.value);
+      setPermissions(data.permissions);
+      navigate('/home');
+    } catch (error) {
+      console.error('Erro no login:', error);
+      setError('Usuário e Senha Inválidos!');
+    } finally {
+      setLoad(false);
+    }
+  };
 
-    }, 1000)
-  }
-
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
+  };
 
   return (
     <Container>
@@ -81,38 +96,44 @@ export default function FormLogin() {
         </Orbit>
       ) : (
         <>
-          <Label>E-mail</Label>
+          <Label htmlFor="email">E-mail</Label>
           <InputEmail
             id="email"
             name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formData.email}
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
+            disabled={load}
           />
 
-          <Label>Senha</Label>
+          <Label htmlFor="password">Senha</Label>
           <InputPassword
             id="password"
             name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={formData.password}
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
+            disabled={load}
           />
 
-          {
-            view
-              ?
-              <MsgBox>
-                <p>Usuário e Senha Inválidos!</p>
-              </MsgBox>
-              :
-              ''
-          }
+          {error && (
+            <MsgBox>
+              <p>{error}</p>
+            </MsgBox>
+          )}
 
           <SendBox>
-            <Submit value="Autenticar" onClick={() => Authenticate()} />
-            <LinkForgot onClick={() => navigate('/login')}> Esqueceu sua senha?</LinkForgot>
+            <Submit 
+              type="button" 
+              value="Autenticar" 
+              onClick={handleSubmit}
+              disabled={load}
+            />
+            <LinkForgot onClick={() => navigate('/forgot-password')}>
+              Esqueceu sua senha?
+            </LinkForgot>
           </SendBox>
         </>
-
       )}
     </Container>
   );
