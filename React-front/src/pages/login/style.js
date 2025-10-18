@@ -1,19 +1,16 @@
 import styled from 'styled-components';
-import fundo from '../../images/background.jpg';
 
 export const Container = styled.div`
-  background: 
-    linear-gradient(135deg, rgba(0, 180, 160, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%),
-    url(${fundo}) center/cover fixed;
+  background: linear-gradient(180deg, #ffffff 0%, #f0f3f1 100%);
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   width: 100%;
+  color: #1a1a1a;
+  font-family: 'Inter', sans-serif;
 
   @media (max-width: 768px) {
-    background: 
-      linear-gradient(135deg, rgba(0, 180, 160, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%),
-      url(${fundo}) center/cover;
+    background: #f8f9f8;
   }
 `;
