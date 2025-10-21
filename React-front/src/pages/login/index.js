@@ -7,30 +7,42 @@ import { OrbitProgress } from 'react-loading-indicators';
 
 export default function Login() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
+  const [load, setLoad] = useState(true);
 
-  useEffect(() => {
-    // Verifica se usuário já está logado
-    Client.get('/auth/me')
-      .then(() => navigate('/home')) // Se logado, vai para home
-      .catch(() => {}) // Se não logado, ignora erro
-      .finally(() => setLoading(false)); // Para loading
-  }, [navigate]);
-
-  if (loading) {
-    return (
-      <Container>
-        <OrbitProgress
-          variant="spokes"
-          color="#00b4a0" // Cor XP
-          size="small"
-          text="Verificando..."
-        />
-      </Container>
-    );
+  function fetchData() {
+    setLoad(true);
+    setTimeout(() => {
+      Client.get('/auth/me')
+        .then((res) => {
+          navigate('/home');
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(() => {
+          setLoad(false);
+        });
+    }, 1000);
   }
 
-  return (
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  return load ? (
+    <Container>
+      <OrbitProgress
+        variant="spokes"
+        color="#cf5387"
+        size="small"
+        text=""
+        style={{
+          background:
+            'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
+        }}
+      />
+    </Container>
+  ) : (
     <Container>
       <FormLogin />
     </Container>

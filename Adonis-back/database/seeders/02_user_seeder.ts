@@ -6,19 +6,19 @@ export default class UsersSeeder extends BaseSeeder {
   public async run () {
     await User.createMany([
       {
-        fullName: 'Mateus Munhoz',
-        email: 'mateus@gmail.com',
+        fullName: 'Vitor',
+        email: 'Vitorflorencio@gmail.com',
         password: await Hash.make('123456'),
         cpf: '12345678901',
-        cidade: 'Pontal do Paraná',
+        cidade: 'balneario gaivotas',
         estado: 'PR',
         rua: 'Rua A',
         numero: '100',
         papel_id: 2,
       },
       {
-        fullName: 'Leonardo Henz',
-        email: 'leonardo@gmail.com',
+        fullName: 'Davi',
+        email: 'davilindo@gmail.com',
         password: await Hash.make('123456'),
         cpf: '98765432100',
         cidade: 'Matinhos',

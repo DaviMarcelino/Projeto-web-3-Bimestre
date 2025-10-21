@@ -84,7 +84,7 @@ export const Submit = styled.input.attrs({ type: 'submit' })`
     box-sizing: border-box;
     width: 130px;
     height: 35px;
-    background-color: #cf5387;
+    background-color: #0300d0ff;
     color: white;
     font-size: 16px;
     font-weight: bold;
@@ -94,7 +94,7 @@ export const Submit = styled.input.attrs({ type: 'submit' })`
     cursor: grab;
 
     &:hover {
-        background-color: #aa4670ff;
+        background-color: #0300d0ff;
         transition: all 0.2s ease-in-out;
     }
 
