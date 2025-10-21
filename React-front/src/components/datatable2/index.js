@@ -1,12 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom'; // Corrigido import
 import { OrbitProgress } from 'react-loading-indicators';
-import IconPig from '../../images/pig.png';
 import IconBank from '../../images/bank.png';
 import UserContext from '../../contexts/UserContext';
-import { Client, setToken } from '../../api/client';
-import { setPermissions } from '../../service/PermissionService';
-import { setDataUser } from '../../service/UserService';
+import { Client } from '../../api/client'; // Removido setToken não utilizado
 import {
   Container,
   Title,
@@ -21,14 +18,12 @@ import {
 } from './style';
 
 export default function DataTable() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [saldo, setSaldo] = useState(null);
   const [load, setLoad] = useState(true);
   const [viewButton, setViewButton] = useState(false);
   const [viewContainer, setViewContainer] = useState(true);
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext); // Use user para verificar autenticação
 
   // Função para mostrar/ocultar extrato
   function ShowContainer() {
@@ -40,85 +35,68 @@ export default function DataTable() {
     setViewButton(!viewButton);
   }
 
-  // Função para autenticar usuário
-  function Authenticate() {
-    const user = { email: email, password: password };
-    setViewButton(false);
-    setLoad(true);
-
-    setTimeout(() => {
-      Client.post('auth/login', user)
-        .then((res) => {
-          const data = res.data;
-          console.log('Login bem-sucedido:', data);
-          setUser(data.user);
-          setDataUser(data.user);
-          setToken(data.token.value);
-          setPermissions(data.permissions);
-          navigate('/home');
-        })
-        .catch(function (error) {
-          setViewButton(true);
-          console.log('Erro no login:', error);
-        })
-        .finally(() => {
-          setLoad(false);
-        });
-    }, 1000);
-  }
-
   // Função para buscar saldo real do usuário
   function getSaldoReal() {
     Client.get('/conta/saldo')
       .then((res) => {
-        console.log('Saldo real:', res.data.saldo);
-        setSaldo(res.data.saldo);
+        console.log('Saldo real:', res.data);
+        setSaldo(res.data.saldo || res.data);
       })
       .catch((error) => {
         console.error('Erro ao buscar saldo:', error);
+        setSaldo(0);
+      })
+      .finally(() => {
+        setLoad(false);
       });
   }
 
-  // Faz login automático (ou você pode remover isso se quiser)
+  // Verificar autenticação e buscar saldo
   useEffect(() => {
-    Authenticate();
-  }, []);
-
-  // Quando terminar o carregamento do login, busca o saldo
-  useEffect(() => {
-    if (!load) {
-      getSaldoReal();
+    // Verifica se o usuário está autenticado
+    if (!user) {
+      console.log('Usuário não autenticado, redirecionando para login...');
+      navigate('/login');
+      return;
     }
-  }, [load]);
+    
+    // Se estiver autenticado, busca o saldo
+    console.log('Usuário autenticado, buscando saldo...');
+    getSaldoReal();
+  }, [user, navigate]);
 
-  // Renderização
-  return load ? (
-    <Orbit>
-      <OrbitProgress
-        variant="spokes"
-        color="#cf5387"
-        size="small"
-        text=""
-        style={{
-          background:
-            'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
-        }}
-      />
-    </Orbit>
-  ) : (
+  // Renderização do loading
+  if (load) {
+    return (
+      <Orbit>
+        <OrbitProgress
+          variant="spokes"
+          color="#cf5387"
+          size="small"
+          text=""
+          style={{
+            background:
+              'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
+          }}
+        />
+      </Orbit>
+    );
+  }
+
+  return (
     <>
       <Container>
         {viewContainer ? (
           <>
             <Title>Saldo</Title>
             <ContainerLine>
-              <Button2 onClick={ShowButton}>𖠂</Button2>
+              <Button2 onClick={ShowButton}>👁️</Button2>
               {viewButton ? (
                 <SubTitle>R$ --.--</SubTitle>
               ) : (
                 <SubTitle>
                   {saldo !== null
-                    ? `R$ ${saldo.toFixed(2).replace('.', ',')}`
+                    ? `R$ ${typeof saldo === 'number' ? saldo.toFixed(2).replace('.', ',') : '0,00'}`
                     : 'Carregando...'}
                 </SubTitle>
               )}
@@ -128,7 +106,10 @@ export default function DataTable() {
           </>
         ) : (
           <>
-            <Container2></Container2>
+            <Container2>
+              <Title>Extrato</Title>
+              <p>Funcionalidade em desenvolvimento...</p>
+            </Container2>
             <Button onClick={ShowContainer}>Ocultar extrato</Button>
           </>
         )}
@@ -140,12 +121,11 @@ export default function DataTable() {
             ❖<span>Pix</span>
           </Button4>
           <Button3 style={{ visibility: 'hidden' }} />
-          <Button3>
+          <Button3 onClick={() => navigate('/investments')}>
             <img src={IconBank} alt="Aplicações" />
             <span>Aplicações</span>
           </Button3>
         </ContainerLine>
-        
       </Container>
     </>
   );

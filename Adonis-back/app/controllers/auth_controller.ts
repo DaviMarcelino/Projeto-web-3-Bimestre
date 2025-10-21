@@ -32,7 +32,7 @@ export default class AuthController {
           value: token.value!.release(),
           expiresAt: token.expiresAt,
         },
-        permissions: { ...permissions[user.papel_id] },
+        // permissions: { ...permissions[user.papel_id] },
       })
     } catch (error) {
       return response.badRequest({
@@ -47,54 +47,39 @@ export default class AuthController {
    */
   async login({ request, response }: HttpContext) {
     try {
-      const { email, password } = await request.validateUsing(loginValidator);
+      const { email, password } = await request.validateUsing(loginValidator)
 
-      const user = await User.findBy('email', email);
+      logger.info(`${email} - ${password}`)
 
-      if (!user) {
-        return response.unauthorized({
-          message: 'Credenciais inválidas',
-        });
-      }
-
-      // Verificar credenciais
-      try {
-        await User.verifyCredentials(email, password);
-      } catch (authError) {
-        return response.unauthorized({
-          message: 'Credenciais inválidas',
-        });
-      }
+      const user = await User.verifyCredentials(email, password)
 
       // Criar token de acesso
       const token = await User.accessTokens.create(user, ['*'], {
         name: 'Login Token',
         expiresIn: '30 days',
-      });
+      })
 
-      const tokenValue = token.value!.release();
-      console.log('🔑 Token gerado:', tokenValue.substring(0, 20) + '...');
-
+      // logger.info(permissions[user.papel_id])
       return response.ok({
         message: 'Login realizado com sucesso',
         user: {
           id: user.id,
           fullName: user.fullName,
           email: user.email,
-          papel_id: user.papel_id,
         },
         token: {
           type: 'bearer',
-          value: tokenValue,
+          value: token.value!.release(),
           expiresAt: token.expiresAt,
         },
-        permissions: { ...permissions[user.papel_id] },
-      });
+        // permissions: { ...permissions[user.papel_id] },
+      })
+
     } catch (error) {
-      console.error('Stack:', error.stack);
       return response.unauthorized({
         message: 'Credenciais inválidas',
-      });
+        error: error.message,
+      })
     }
   }
 
