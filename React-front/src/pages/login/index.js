@@ -33,7 +33,7 @@ export default function Login() {
     <Container>
       <OrbitProgress
         variant="spokes"
-        color="#cf5387"
+        color="#0300d0ff"
         size="small"
         text=""
         style={{

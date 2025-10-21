@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  background-color: #3c3c3cff;
+  background-color: #0300d0ff;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -24,7 +24,7 @@ export const Orbit = styled.div`
   justify-content: center;
   min-height: 100vh;
   width: 100%;
-  background-color: #3c3c3cff;
+  background-color: #0300d0ff;
   display: flex;
   gap: 20px;
   padding: 5%;
@@ -53,7 +53,7 @@ export const Button = styled.button`
   box-sizing: border-box;
   width: 100%;
   height: 50px;
-  background-color: #1e1e1ecb;
+  background-color: #0300d0ff;
   color: white;
   font-size: 16px;
   font-weight: bold;

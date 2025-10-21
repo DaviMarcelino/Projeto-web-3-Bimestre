@@ -68,7 +68,7 @@ export const SendBox = styled.div`
     text-align: center;
     width: 90%;
     padding-bottom: 30px;
-    border-bottom: 1px solid #555;
+    border-bottom: 1px solid #0300d0ff;
 `
 
 export const MsgBox = styled.div`

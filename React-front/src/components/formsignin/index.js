@@ -50,7 +50,7 @@ export default function FormSignin() {
         <Orbit>
           <OrbitProgress
             variant="spokes"
-            color="#cf5387"
+            color="#0300d0ff"
             size="small"
             text=""
             style={{
